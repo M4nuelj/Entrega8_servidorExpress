@@ -12,7 +12,7 @@ class ProductManager{
 
     async loadData(){
         if(!fs.existsSync(this.path)){
-            fs.promises.writeFile(this.path, JSON.stringify(this.products));
+            await fs.promises.writeFile(this.path, JSON.stringify(this.products));
         }else{
             this.products=JSON.parse(await fs.promises.readFile(this.path, 'utf-8'))
             ProductManager.#id=this.products[this.products.length-1]?.id||0;
@@ -29,7 +29,7 @@ class ProductManager{
         if(!product.title||
             !product.description||
             !product.price||
-            !product.thumnail||
+            !product.thumbnail||
             !product.code||
             !product.stock
         ){
@@ -43,14 +43,14 @@ class ProductManager{
         await this.loadData();
         return `${this.products.length>0 ? this.products:"No products loaded in the database"}`
     }
-    async getProductById(id){
+    async getProductById(id) {
         await this.loadData();
-        const findIndex=this.products.findIndex((p)=>p.id==id);
-        if(findIndex===-1){
-            return 'The product was not found with the id:'+id;
-        };
-        return findIndex
-    };
+        const product = this.products.find((p) => p.id == id);
+        if (!product) {
+          return 'The product was not found with the id: ' + id;
+        }
+        return product;
+      }
     async updateProduct(id, changes){
 
         try{
@@ -63,14 +63,14 @@ class ProductManager{
             const productUpdated={...productFound, ...changes};
             products[findProducts]=productUpdated;
             
-            fs.promises.writeFile(this.path, JSON.stringify(products));
+            await fs.promises.writeFile(this.path, JSON.stringify(products));
 
         }catch(err){
             throw new Error ('The update product did not go through')
         }; 
 
     }
-    async daleteProduct(id){
+    async deleteProduct(id){
         try{
             const products = await this.getProduct();
             const findProducts=products.some((product)=>product.id===id);
