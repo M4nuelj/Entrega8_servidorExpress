@@ -34,12 +34,12 @@ class CartManager{
 
     }
 
-    async addProducts(Cid,productId, quantity=1){
+    async addProducts(Cid,productId, quantity){
 
         const getCarts= await this.getCart(Cid);
         const productsId= getCarts.products.findIndex(p=>p.product===productId);
         if(productsId===-1){
-            getCarts.products.push({product:productId, quantity})
+            getCarts.products.push({product:productId, quantity:1})
         }else{
             getCarts.products[productsId].quantity+=quantity;
         }

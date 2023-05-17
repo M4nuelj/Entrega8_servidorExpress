@@ -64,7 +64,7 @@ productsRouter.put('/:pid', async(req, res)=>{
 
 }
 )
-productManager.delete('/:pid', async(req, res)=>{
+productsRouter.delete('/:pid', async(req, res)=>{
     const productId=parseInt(req.params.pid);
     try{
         if(!productId){
