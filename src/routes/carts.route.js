@@ -1,7 +1,7 @@
 const express=require('express');
 const cartsRoute= express.Router();
 const CartManager=require("../carts");
-const cartManager= new CartManager();
+const cartManager= new CartManager("/carts.json");
 
 cartsRoute.post('/', async (req, res)=>{
     try{

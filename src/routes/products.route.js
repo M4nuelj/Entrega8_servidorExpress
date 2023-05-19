@@ -1,7 +1,7 @@
 const express=require('express');
 const productsRouter=express.Router();
 const {v4: uuidv4}=require('uuid');
-const {ProductManager}=require('../products');
+const {ProductManager}=require('../products.js');
 const productManager= new ProductManager("/products.json");
 
 productsRouter.get('/', async(req, res)=>{
@@ -42,7 +42,7 @@ productsRouter.post('/', async(req, res)=>{
 
     try{
         const {title,description,  code, price, stock, category, thumbnail}=req.body;
-        const add_Produts={id:uuidv4(), description, code, price, stock, category, thumbnail:thumbnail || []};
+        const add_Produts={id:uuidv4(), title, description, code, price, stock, category, thumbnail:thumbnail || []};
         await productManager.postProduct(add_Produts);
         return res.status(200).json(add_Produts);
 

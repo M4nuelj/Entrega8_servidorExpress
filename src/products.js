@@ -22,7 +22,7 @@ class ProductManager{
 
     async postProduct(product){
         await this.loadData();
-        const verify = this.products.find((cod)=>cod.code==product.code);
+        const verify = this.products.find((cod)=>cod.code===product.code);
         if(verify!=undefined){
             return 'The product code already exist'
         }
