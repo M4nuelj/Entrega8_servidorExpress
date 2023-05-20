@@ -20,6 +20,13 @@ class CartManager {
         const products = [];
         products.push({ pid, quantity })
         const postCart = { id: uuidv4(), products: products };
+        // const verify=this.products.find((id)=>id.pid===products.pid)
+        //if(verify){
+        //const productNumber=0;
+        //ProductNumber+=
+        //
+        //}
+
         this.carts.push(postCart);
         await fs.promises.writeFile(this.path, JSON.stringify(this.carts, null, 2))
         return postCart;
