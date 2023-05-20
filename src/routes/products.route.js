@@ -2,7 +2,7 @@ const express=require('express');
 const productsRouter=express.Router();
 const {v4: uuidv4}=require('uuid');
 const {ProductManager}=require('../products.js');
-const productManager= new ProductManager("/products.json");
+const productManager= new ProductManager("products.json");
 
 productsRouter.get('/', async(req, res)=>{
     try{
@@ -23,7 +23,7 @@ productsRouter.get('/', async(req, res)=>{
 
 productsRouter.get('/:pid', async(req, res)=>{
     try{
-        const id= parseInt(req.params.pid);
+        const id= req.params.pid;
         const products= await productManager.getProductById(id);
         if(!products){
             return res.status(400).json("Product not found");
@@ -39,12 +39,11 @@ productsRouter.get('/:pid', async(req, res)=>{
 });
 
 productsRouter.post('/', async(req, res)=>{
-
     try{
         const {title,description,  code, price, stock, category, thumbnail}=req.body;
         const add_Produts={id:uuidv4(), title, description, code, price, stock, category, thumbnail:thumbnail || []};
-        await productManager.postProduct(add_Produts);
-        return res.status(200).json(add_Produts);
+        const productCreated = await productManager.postProduct(add_Produts);
+        return res.status(200).json(productCreated);
 
     }catch(err){
         return res.status(500).json({error:err.message})
@@ -52,7 +51,7 @@ productsRouter.post('/', async(req, res)=>{
 });
 
 productsRouter.put('/:pid', async(req, res)=>{
-    const productId= parseInt(req.params.pid);
+    const productId= req.params.pid;
     const update= req.body;
     try{
         const updateP= await productManager.updateProduct(productId, update);
@@ -65,7 +64,7 @@ productsRouter.put('/:pid', async(req, res)=>{
 }
 )
 productsRouter.delete('/:pid', async(req, res)=>{
-    const productId=parseInt(req.params.pid);
+    const productId=req.params.pid;
     try{
         if(!productId){
             return "The product selected was not found"

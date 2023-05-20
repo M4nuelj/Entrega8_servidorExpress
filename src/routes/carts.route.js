@@ -1,11 +1,12 @@
 const express=require('express');
 const cartsRoute= express.Router();
 const CartManager=require("../carts");
-const cartManager= new CartManager("/carts.json");
+const cartManager= new CartManager("carts.json");
 
 cartsRoute.post('/', async (req, res)=>{
     try{
         const addCart= await cartManager.addCart();
+        
         res.status(200).json(addCart)
     }catch(err){
         res.status(500).json({message: "Theres an error in the server"});

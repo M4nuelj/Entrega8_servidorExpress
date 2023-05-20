@@ -2,18 +2,26 @@ const fs = require('fs');
 const {v4:uuidv4}=require('uuid');
 
 class CartManager{
-    constructor(){
+    constructor(path){
         this.carts=[];
+        this.path=path;
     }
 
     async loadCart(){
-        try{
-            await fs.promises.writeFile("../carts.json", JSON.stringify({carts:this.carts}));
+        
+        if(!fs.existsSync(this.path)){
+           
+            try{
+                await fs.promises.writeFile(this.path, JSON.stringify({carts:this.carts}));
+              
+            }catch(err){
+                throw new Error("The new file did not go through")
+            }
 
-        }catch(err){
-            throw new Error("The new file did not go through")
-
+        }else{
+            this.carts=JSON.parse(await fs.promises.readFile(this.path, 'utf-8'))
         }
+       
     }
     async addCart(){
         const postCart={id: uuidv4(), products:[]};

@@ -12,6 +12,7 @@ class ProductManager{
 
     async loadData(){
         if(!fs.existsSync(this.path)){
+
             await fs.promises.writeFile(this.path, JSON.stringify(this.products));
         }else{
             this.products=JSON.parse(await fs.promises.readFile(this.path, 'utf-8'))
@@ -33,15 +34,16 @@ class ProductManager{
             !product.code||
             !product.stock
         ){
-            return 'You must add the complete imformation about the produt'
+            return 'You must add the complete imformation about the product'
         };
         this.products.push({id: ProductManager.#id+1, ...product});
         ProductManager.#id++
         await fs.promises.writeFile(this.path, JSON.stringify(this.products,null,2))
+        return product;
     }
     async getProduct(){
         await this.loadData();
-        return `${this.products.length>0 ? this.products:"No products loaded in the database"}`
+        return this.products.length > 0 ? this.products : "No products loaded in the database"
     }
     async getProductById(id) {
         await this.loadData();
@@ -56,14 +58,15 @@ class ProductManager{
         try{
             const products= await this.getProduct();
             const findProducts= products.findIndex((product)=>product.id===id);
-            if(!findProducts){
+            
+            if(findProducts === -1) {
                 throw new Error ( 'The product was not found');
             }
             const productFound=products[findProducts];
             const productUpdated={...productFound, ...changes};
             products[findProducts]=productUpdated;
             
-            await fs.promises.writeFile(this.path, JSON.stringify(products));
+            await fs.promises.writeFile(this.path, JSON.stringify(products,null,2));
 
         }catch(err){
             throw new Error ('The update product did not go through')
