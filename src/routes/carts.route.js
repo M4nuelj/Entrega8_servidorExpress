@@ -5,7 +5,8 @@ const cartManager= new CartManager("carts.json");
 
 cartsRoute.post('/', async (req, res)=>{
     try{
-        const addCart= await cartManager.addCart();
+        const {pid, quantity}=req.body;
+        const addCart= await cartManager.addCart(pid, quantity);
         
         res.status(200).json(addCart)
     }catch(err){

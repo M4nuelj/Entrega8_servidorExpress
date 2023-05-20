@@ -1,55 +1,50 @@
 const fs = require('fs');
-const {v4:uuidv4}=require('uuid');
+const { v4: uuidv4 } = require('uuid');
 
-class CartManager{
-    constructor(path){
-        this.carts=[];
-        this.path=path;
+class CartManager {
+    constructor(path) {
+        this.carts = [];
+        this.path = path;
     }
 
-    async loadCart(){
-        
-        if(!fs.existsSync(this.path)){
-           
-            try{
-                await fs.promises.writeFile(this.path, JSON.stringify({carts:this.carts}));
-              
-            }catch(err){
-                throw new Error("The new file did not go through")
-            }
-
-        }else{
-            this.carts=JSON.parse(await fs.promises.readFile(this.path, 'utf-8'))
+    async loadCart() {
+        if (!fs.existsSync(this.path)) {
+            await fs.promises.writeFile(this.path, JSON.stringify(this.carts));
+        } else {
+            this.carts = JSON.parse(await fs.promises.readFile(this.path, 'utf-8'))
         }
-       
+
     }
-    async addCart(){
-        const postCart={id: uuidv4(), products:[]};
-        this.carts.push(postCart);
+    async addCart(pid, quantity) {
         await this.loadCart();
+        const products = [];
+        products.push({ pid, quantity })
+        const postCart = { id: uuidv4(), products: products };
+        this.carts.push(postCart);
+        await fs.promises.writeFile(this.path, JSON.stringify(this.carts, null, 2))
         return postCart;
 
 
     }
-    async getCart(Cid){
-        try{
-            const cartId= await this.carts.find((cart)=>cart.id===Cid);
+    async getCart(Cid) {
+        try {
+            const cartId = await this.carts.find((cart) => cart.id === Cid);
             return cartId;
-            
-        }catch(err){
+
+        } catch (err) {
             throw new Error("The cart id was not found")
         }
 
     }
 
-    async addProducts(Cid,productId, quantity){
+    async addProducts(Cid, productId, quantity) {
 
-        const getCarts= await this.getCart(Cid);
-        const productsId= getCarts.products.findIndex(p=>p.product===productId);
-        if(productsId===-1){
-            getCarts.products.push({product:productId, quantity:1})
-        }else{
-            getCarts.products[productsId].quantity+=quantity;
+        const getCarts = await this.getCart(Cid);
+        const productsId = getCarts.products.findIndex(p => p.product === productId);
+        if (productsId === -1) {
+            getCarts.products.push({ product: productId, quantity: 1 })
+        } else {
+            getCarts.products[productsId].quantity += quantity;
         }
         await this.loadCart();
         return getCarts;
@@ -59,4 +54,4 @@ class CartManager{
 
 }
 
-module.exports=CartManager;
+module.exports = CartManager;
