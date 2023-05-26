@@ -14,7 +14,7 @@ form.addEventListener('submit', (event) => {
     
     newProduct = {title, description, price, thumbnail, code, stock, category, status};
 
-    //FRONT EMITE-------------------Borrar
+   
     socket.emit('msg_from_client_to_server', newProduct);
     form.reset();
 });
@@ -29,7 +29,7 @@ deleteForm.addEventListener('submit', (event) => {
 });
 
 
-//FRONT RECIBE
+
 socket.on('updatedProducts', (data) => {
     const productList = document.getElementById('productList');
     productList.innerHTML = '';
